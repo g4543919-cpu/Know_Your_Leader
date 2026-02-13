@@ -2,8 +2,10 @@ package com.example.MyNewProject.dto;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class AssetDTO {
-    private double declared_assets;
-    private double declared_liabilities;
+    private BigDecimal declared_assets;
+    private BigDecimal declared_liabilities;
 }

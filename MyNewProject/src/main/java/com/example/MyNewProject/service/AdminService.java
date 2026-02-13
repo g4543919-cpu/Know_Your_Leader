@@ -1,19 +1,105 @@
 package com.example.MyNewProject.service;
 
+import com.example.MyNewProject.dto.CandidateDto;
+import com.example.MyNewProject.dto.ConstituencyDto;
+import com.example.MyNewProject.dto.ElectionDto;
 import com.example.MyNewProject.dto.ElectionResultRequestDTO;
+import com.example.MyNewProject.repository.*;
+import com.example.MyNewProject.tables.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
 
 @Service
 public class AdminService {
 
-
+    private final CandidateRepo candidateRepo;
+    private final Asset_DeclarationRepo assetDeclarationRepo;
+    private  final Criminal_CaseRepo criminalCaseRepo;
+    private final ElectionRepo electionRepo;
+    private final ConstituencyRepo constituencyRepo;
+    private final Election_ResultRepo electionResultRepo;
+    public AdminService(
+            CandidateRepo candidateRepo,
+            Asset_DeclarationRepo assetDeclarationRepo,
+            Criminal_CaseRepo criminalCaseRepo,
+            ElectionRepo electionRepo,
+            ConstituencyRepo constituencyRepo,
+            Election_ResultRepo electionResultRepo
+    ){
+        this.assetDeclarationRepo=assetDeclarationRepo;
+        this.candidateRepo=candidateRepo;
+        this.constituencyRepo =constituencyRepo;
+        this.criminalCaseRepo=criminalCaseRepo;
+        this.electionRepo =electionRepo;
+        this.electionResultRepo=electionResultRepo;
+    }
 
     @Transactional
     public void createElectionResult(ElectionResultRequestDTO dto) {
 
+        Candidate candidate = candidateRepo.findById(dto.getCandidateId()).orElseThrow(()->new IllegalArgumentException("candidate not found"));
+        Constituency constituency = constituencyRepo.findById(dto.getConstituencyId()).orElseThrow(()->new IllegalArgumentException("constinuecny not found"));
+        Election election = electionRepo.findById(dto.getElectionId()).orElseThrow(()->new IllegalArgumentException("election not found"));
+        Election_Result electionResult = new Election_Result();
+        electionResult.setCandidate(candidate);
+        electionResult.setElection(election);
+        electionResult.setConstituency(constituency);
+
+        electionResult.setResultStatus(dto.getResultStatus());
+        electionResult.setVotes_received(dto.getVotes_received());
+
+        List<Asset_Declaration> assetDeclarations = dto
+                .getAssets()
+                .stream()
+                .map(a->{
+                    Asset_Declaration assetDeclaration = new Asset_Declaration();
+                    assetDeclaration.setDeclared_assets(a.getDeclared_assets());
+                    assetDeclaration.setDeclared_liabilities(a.getDeclared_liabilities());
+                    assetDeclaration.setElectionResult(electionResult);
+                    return  assetDeclaration;
+
+                }).toList();
+        electionResult.setAssetDeclarations(assetDeclarations);
+
+        List<Criminal_Case> criminalCases = dto
+                .getCriminalCases()
+                .stream()
+                .map(a->{
+                    Criminal_Case criminalCase = new Criminal_Case();
+                    criminalCase.setCase_description(a.getCase_description());
+                    criminalCase.setSeverityLevel(a.getSeverityLevel());
+                    criminalCase.setElectionResult(electionResult);
+                    return criminalCase;
+                }).toList();
+        electionResult.setCriminalCases(criminalCases);
+        electionResultRepo.save(electionResult);
+    }
+
+    public void createCandidate(CandidateDto dto) {
+        Candidate candidate = new Candidate();
+        candidate.setBiofraphy(dto.getBiography());
+        candidate.setDob(dto.getDob());
+        candidate.setGender(dto.getGender());
+        candidate.setName(dto.getName());
+        candidate.setParty(dto.getParty());
+        candidateRepo.save(candidate);
+
+    }
+
+    public void createConstituency(ConstituencyDto dto) {
+        Constituency constituency = new Constituency();
+        constituency.setName(dto.getName());
+        constituency.setDistrict(dto.getDistrict());
+        constituency.setState(dto.getState());
+        constituencyRepo.save(constituency);
+    }
+
+    public void createElection(ElectionDto dto) {
+        Election election = new Election();
+        election.setElectionType(dto.getElectionType());
+        election.setYear(dto.getYear());
     }
 }
