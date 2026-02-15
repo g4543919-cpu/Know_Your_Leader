@@ -1,6 +1,7 @@
 package com.example.MyNewProject.tables;
 
 import com.example.MyNewProject.enums.Result_Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,6 +24,7 @@ public class Candidate {
 
     private String party;
     @OneToMany(mappedBy = "candidate")
+    @JsonIgnore
     private List<Election_Result> electionResult;
 
 

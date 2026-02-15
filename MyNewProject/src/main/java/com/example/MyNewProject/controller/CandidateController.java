@@ -3,6 +3,9 @@ package com.example.MyNewProject.controller;
 import com.example.MyNewProject.service.CandidateService;
 import com.example.MyNewProject.tables.Asset_Declaration;
 import com.example.MyNewProject.tables.Candidate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,24 +25,38 @@ public class CandidateController {
     }
     @GetMapping("/search")
     public List<Candidate> searchCandidate(@RequestParam String name){
-        return  null;
+        return  candidateService.getCandidateByName(name);
     }
     @GetMapping("/party")
     public List<Candidate>  getCandidatebyParty(@RequestParam String partyname){
-        return  null;
+        return  candidateService.getCandidateByParty(partyname);
     }
     @GetMapping("/compare")
-    public  Object compareCandidate(@RequestParam int id1,@RequestParam int id2){
-        return  null;
+    public  List<Candidate> compareCandidate(@RequestParam int id1,@RequestParam int id2){
+        return  candidateService.compareCandidate(id1,id2);
     }
-    @GetMapping("{id}/assets")
-    public List<Asset_Declaration>  getAssets(@PathVariable int id){
-        return  null;
+    @GetMapping("/assets/{idCandidate}")
+    public List<Asset_Declaration>  getAssets(@PathVariable int idCandidate){
+        return  candidateService.getAssets(idCandidate);
     }
-    @GetMapping("/{id}/download")
-    public String downloadCandidateProfile(@PathVariable int id){
-        return  null;
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<byte[]> downloadCandidateProfile(@PathVariable int id) {
+        byte[] pdf = candidateService.downloadCandidateProfile(id);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=candidate_profile.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
+
+    @GetMapping("/nandp/{name}/{party}")
+    public List<Candidate> getByNamePartyConstituency(
+            @PathVariable String name,
+            @PathVariable String party
+            ){
+        return candidateService.getByNamePartyConstituency(name,party);
+    }
+
 
 
 

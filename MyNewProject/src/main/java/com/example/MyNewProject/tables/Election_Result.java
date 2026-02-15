@@ -1,6 +1,7 @@
 package com.example.MyNewProject.tables;
 
 import com.example.MyNewProject.enums.Result_Status;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -26,6 +27,7 @@ public class Election_Result {
     @JoinColumn
     private Constituency constituency;
     @OneToMany(mappedBy = "electionResult",cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Asset_Declaration> assetDeclarations;
     @OneToMany(mappedBy = "electionResult",cascade = CascadeType.ALL)
     private List<Criminal_Case> criminalCases ;

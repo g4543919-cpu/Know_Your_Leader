@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface Election_ResultRepo extends JpaRepository<Election_Result,Integer> {
 
+    Election_Result findByCandidateId(int idCandidate);
 }

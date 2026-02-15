@@ -1,5 +1,6 @@
 package com.example.MyNewProject.tables;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,6 +18,7 @@ public class Asset_Declaration {
     private BigDecimal declared_liabilities;
     @JoinColumn
     @ManyToOne
+    @JsonIgnore
     private Election_Result electionResult;
 
 }
