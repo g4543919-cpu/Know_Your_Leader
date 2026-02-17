@@ -4,11 +4,14 @@ import com.example.MyNewProject.enums.Result_Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
-@Data
+@Setter
+@Getter
 public class Election_Result {
 
     @Id

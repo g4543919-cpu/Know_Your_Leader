@@ -22,14 +22,17 @@ public class CandidateService {
     private final CandidateRepo candidateRepo;
     private  final Election_ResultRepo electionResultRepo;
     private final Asset_DeclarationRepo assetDeclarationRepo;
+    private  final  AiService aiService;
     public CandidateService(
             CandidateRepo candidateRepo,
             Election_ResultRepo electionResultRepo,
-            Asset_DeclarationRepo assetDeclarationRepo
+            Asset_DeclarationRepo assetDeclarationRepo,
+            AiService aiService
             ){
         this.candidateRepo=candidateRepo;
         this.electionResultRepo= electionResultRepo;
         this.assetDeclarationRepo=assetDeclarationRepo;
+        this.aiService=aiService;
     }
 
     public Candidate getCandidateById(int id) {
@@ -129,4 +132,74 @@ public class CandidateService {
         List<Candidate> candidates = candidateRepo.findByNameAndParty(name,party);
         return candidates;
     }
+
+    public String getCandidateSummary(int id) throws Exception {
+        Candidate candidate = candidateRepo.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("Candidate does not exist"));
+
+        StringBuilder prompt = new StringBuilder();
+
+        // Static Instructions
+        prompt.append("""
+                You are an impartial political data analyst.
+                Provide a neutral, fact-based summary.
+                Use bullet points.
+                Keep it under 150 words.
+                Do not give recommendations.
+                \n
+                """);
+
+        //candidate basic information
+        prompt.append("Candidate Information  :\n");
+        prompt.append("candidate name"+ candidate.getName()+"\n");
+        prompt.append("candidate age"+ candidate.getDob()+"\n");
+        prompt.append("candidate gender"+ candidate.getGender()+"\n");
+        prompt.append("candidate party"+ candidate.getParty()+"\n");
+        prompt.append("candidate Biography"+ candidate.getBiofraphy()+"\n");
+        prompt.append("candidate currentAsset"+ candidate.getCurrentdeclared_assets()+"\n");
+        prompt.append("candidate currentliabilities"+ candidate.getCurrentdeclared_liabilities()+"\n");
+        prompt.append("candidate totalnumberofcases"+ candidate.getTotoalnumberofcase()+"\n");
+
+        //election result
+
+        prompt.append("election result \n");
+
+        if(candidate.getElectionResult()!=null){
+            for(Election_Result electionResult : candidate.getElectionResult()){
+                Election election = electionResult.getElection();
+                //election
+                prompt.append("Election Type"+election.getElectionType()+"\n");
+                prompt.append("Year"+election.getYear()+"\n");
+
+                //election result
+                prompt.append("Votes Recieved"+electionResult.getVotes_received()+"\n");
+                prompt.append("Result Recieved"+electionResult.getResultStatus()+"\n");
+                prompt.append("Constituency "+electionResult.getConstituency()+"\n");
+
+                //asset declartion
+                prompt.append("Asset Declartion"+"\n");
+                for(Asset_Declaration assetDeclaration : electionResult.getAssetDeclarations()){
+                    prompt.append("Declared Assetes"+assetDeclaration.getDeclared_assets() +"\n");
+                    prompt.append("Declared Liilities" +assetDeclaration.getDeclared_liabilities()+"\n");
+                }
+                //criminal cases
+                prompt.append("criminal cases "+"\n");
+                for(Criminal_Case criminalCase : electionResult.getCriminalCases()){
+                    prompt.append("severity level"+criminalCase.getSeverityLevel() +"\n");
+                    prompt.append("Desscription"+criminalCase.getCase_description() +"\n");
+
+                }
+
+            }
+        }
+        return aiService.generateSummary(prompt.toString());
+
+
+    }
 }
+
+
+
+
+
+

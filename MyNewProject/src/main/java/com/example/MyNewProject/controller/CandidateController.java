@@ -56,6 +56,42 @@ public class CandidateController {
             ){
         return candidateService.getByNamePartyConstituency(name,party);
     }
+    @GetMapping("/ai/summary/{id}")
+    public ResponseEntity<String> getcandidatesummary(@PathVariable int id) throws Exception {
+        String summury =  candidateService.getCandidateSummary(id);
+        return ResponseEntity.ok(summury);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

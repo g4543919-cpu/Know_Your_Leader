@@ -3,6 +3,8 @@ package com.example.MyNewProject.tables;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
@@ -10,7 +12,8 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
+@Setter
+@Getter
 public class Candidate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

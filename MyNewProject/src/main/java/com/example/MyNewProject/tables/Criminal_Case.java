@@ -3,9 +3,12 @@ package com.example.MyNewProject.tables;
 import com.example.MyNewProject.enums.SeverityLevel;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class Criminal_Case {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
