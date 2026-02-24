@@ -196,6 +196,16 @@ public class CandidateService {
 
 
     }
+
+    public List<Candidate> getAllCandidate() {
+        return  candidateRepo.findAll();
+    }
+
+    public List<Candidate> search(String name, String party, String state, String constituency) {
+        System.out.println(name +" "+party+" "+state+" "+ constituency);
+        return candidateRepo.search(name,party,state,constituency);
+
+    }
 }
 
 

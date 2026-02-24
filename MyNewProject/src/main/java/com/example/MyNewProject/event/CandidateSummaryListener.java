@@ -1,10 +1,8 @@
 package com.example.MyNewProject.event;
 
-import com.example.MyNewProject.repository.Asset_DeclarationRepo;
-import com.example.MyNewProject.repository.CandidateRepo;
-import com.example.MyNewProject.repository.Criminal_CaseRepo;
-import com.example.MyNewProject.repository.Election_ResultRepo;
+import com.example.MyNewProject.repository.*;
 import com.example.MyNewProject.tables.Candidate;
+import com.example.MyNewProject.tables.Constituency;
 import com.example.MyNewProject.tables.Election_Result;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,18 +20,20 @@ public class CandidateSummaryListener {
     private  final Asset_DeclarationRepo assetDeclarationRepo;
     private final Criminal_CaseRepo criminalCaseRepo;
     private final Election_ResultRepo electionResultRepo;
+    private final ConstituencyRepo constituencyRepo;
 
     public  CandidateSummaryListener(
             CandidateRepo candidateRepo,
             Asset_DeclarationRepo assetDeclarationRepo,
             Criminal_CaseRepo criminalCaseRepo,
-            Election_ResultRepo electionResultRepo
+            Election_ResultRepo electionResultRepo,
+            ConstituencyRepo constituencyRepo
     ){
         this.assetDeclarationRepo=assetDeclarationRepo;
         this.candidateRepo =candidateRepo;
         this.criminalCaseRepo =criminalCaseRepo;
         this.electionResultRepo =electionResultRepo;
-
+        this.constituencyRepo= constituencyRepo;
     }
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener
@@ -51,7 +51,9 @@ int id = electionResultCreatedEvent.getCandidateId();
         log.info("Assets: {}", totalAssets);
         log.info("Liabilities: {}", totalLiabilities);
         log.info("Cases: {}", totalCases);
-
+        Constituency constituency = electionResultlatest.getConstituency();
+        candidate.setCurrentConstituency(constituency.getName());
+        candidate.setCurrentState(constituency.getState());
         candidate.setCurrentdeclared_liabilities(totalLiabilities);
         candidate.setCurrentdeclared_assets(totalAssets);
         candidate.setTotoalnumberofcase(totalCases);

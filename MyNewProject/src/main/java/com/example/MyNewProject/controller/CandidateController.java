@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/candidate")
 public class CandidateController {
@@ -61,6 +62,19 @@ public class CandidateController {
         String summury =  candidateService.getCandidateSummary(id);
         return ResponseEntity.ok(summury);
     }
+    @GetMapping("allCandidatedata")
+    public List<Candidate> getAllCandidate(){
+        return candidateService.getAllCandidate();
+    }
+    @GetMapping("/search/BYANUFIELD")
+    public List<Candidate> searchCandidate(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String party,
+            @RequestParam(required = false) String state,
+            @RequestParam(required = false) String constituency
+            ){
+          return  candidateService.search(name,party,state,constituency);
+          }
 
 
 

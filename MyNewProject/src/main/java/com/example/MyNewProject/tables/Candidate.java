@@ -31,6 +31,9 @@ public class Candidate {
     private Date createdAt;
     private String party;
     private String ImageUrl;
+    private String currentConstituency;
+    private String currentState;
+
     @OneToOne(mappedBy = "candidate")
     @JsonIgnore
     private Notes notes;
