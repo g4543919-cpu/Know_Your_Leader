@@ -19,14 +19,13 @@ public interface CandidateRepo extends JpaRepository<Candidate,Integer> {
     List<Candidate> findByNameAndParty(String name, String party);
     List<Candidate> findAll();
 
-    @Query(value = """
-SELECT *
-FROM CANDIDATE c
-WHERE (:name IS NULL OR LOWER(c.NAME) LIKE '%' || LOWER(:name) || '%')
-AND (:party IS NULL OR LOWER(c.PARTY) LIKE '%' || LOWER(:party) || '%')
-AND (:state IS NULL OR LOWER(c.CURRENT_STATE) LIKE '%' || LOWER(:state) || '%')
-AND (:constituency IS NULL OR LOWER(c.CURRENT_CONSTITUENCY) LIKE '%' || LOWER(:constituency) || '%')
-""", nativeQuery = true)
+    @Query("""
+SELECT c FROM Candidate c
+WHERE (:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%')))
+AND (:party IS NULL OR LOWER(c.party) LIKE LOWER(CONCAT('%', :party, '%')))
+AND (:state IS NULL OR LOWER(c.currentState) LIKE LOWER(CONCAT('%', :state, '%')))
+AND (:constituency IS NULL OR LOWER(c.currentConstituency) LIKE LOWER(CONCAT('%', :constituency, '%')))
+""")
     List<Candidate> search(
             @Param("name") String name,
             @Param("party") String party,
