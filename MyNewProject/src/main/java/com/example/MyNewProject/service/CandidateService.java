@@ -65,9 +65,16 @@ public class CandidateService {
     }
 
     public List<Asset_Declaration> getAssets(int idCandidate) {
-        Optional<Election_Result> electionResult = electionResultRepo.findByCandidateId(idCandidate);
-        List<Asset_Declaration> assetDeclarations = electionResult.get().getAssetDeclarations();
-        return  assetDeclarations;
+
+        List<Election_Result> electionResults = electionResultRepo.findByCandidateId(idCandidate);
+
+        List<Asset_Declaration> assetDeclarations = new ArrayList<>();
+
+        for(Election_Result electionResult : electionResults){
+            assetDeclarations.addAll(electionResult.getAssetDeclarations());
+        }
+
+        return assetDeclarations;
     }
 
     public byte[] downloadCandidateProfile(int id) {
@@ -215,8 +222,11 @@ public class CandidateService {
 
     public List<CandidateElectionHistory> getElectionResultByCandidate(int id) {
 
-        List<Election_Result> electionResults = Collections.singletonList(electionResultRepo.findByCandidateId(id)
-                .orElseThrow(() -> new IllegalArgumentException("Election result correpond to this candidate does not exist")));
+        List<Election_Result> electionResults = electionResultRepo.findByCandidateId(id);
+
+        if(electionResults.isEmpty()){
+            throw new IllegalArgumentException("Election result corresponding to this candidate does not exist");
+        }
        List<CandidateElectionHistory> finalcandidateElectionHistories = new ArrayList<>();
         for (Election_Result electionResult: electionResults){
             CandidateElectionHistory candidateElectionHistory = new CandidateElectionHistory();

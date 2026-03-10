@@ -86,8 +86,8 @@ public class CandidateController {
         Pageable pageable = PageRequest.of(page,size);
           return  candidateService.search(name,party,state,constituency,pageable);
           }
-   @GetMapping("/electionresult")
-   public List<CandidateElectionHistory> getElectionResultByCandidate(int id){
+   @GetMapping("/electionresult/{id}")
+   public List<CandidateElectionHistory> getElectionResultByCandidate(@PathVariable int id){
         return candidateService.getElectionResultByCandidate(id);
    }
 

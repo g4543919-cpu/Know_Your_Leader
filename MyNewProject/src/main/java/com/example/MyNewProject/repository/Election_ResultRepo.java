@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface Election_ResultRepo extends JpaRepository<Election_Result,Integer> {
 
-    Optional<Election_Result> findByCandidateId(int idCandidate);
+    List<Election_Result> findByCandidateId(int idCandidate);
 
     Election_Result findTopByCandidateOrderByIdDesc(Candidate candidate);
 
