@@ -10,6 +10,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -40,20 +41,23 @@ public class CandidateService {
         this.assetDeclarationRepo=assetDeclarationRepo;
         this.aiService=aiService;
     }
-
+    @Cacheable(value = "candidate", key = "#id")
     public Candidate getCandidateById(int id) {
         return candidateRepo.findById(id)
                 .orElseThrow(()->new IllegalArgumentException("Candidadate Does Not Exist"));
     }
 
-
+    @Cacheable(value = "candidateByName", key = "#name")
     public List<Candidate> getCandidateByName(String name) {
         return  candidateRepo.findByName(name);
     }
 
+    @Cacheable(value = "candidateByParty",key = "#partyname")
     public List<Candidate> getCandidateByParty(String partyname) {
         return  candidateRepo.findByParty(partyname);
     }
+
+    @Cacheable(value = "candidateCompare", key = "#id1 + '-' + #id2")
 
     public List<Candidate> compareCandidate(int id1, int id2) {
         Candidate c1 = candidateRepo.findById(id1)
@@ -63,7 +67,7 @@ public class CandidateService {
         return List.of(c1,c2);
 
     }
-
+    @Cacheable(value = "candidateAssets", key = "#idCandidate")
     public List<Asset_Declaration> getAssets(int idCandidate) {
 
         List<Election_Result> electionResults = electionResultRepo.findByCandidateId(idCandidate);
@@ -220,6 +224,7 @@ public class CandidateService {
 
     }
 
+    @Cacheable(value = "candidateElectionHistory", key = "#id")
     public List<CandidateElectionHistory> getElectionResultByCandidate(int id) {
 
         List<Election_Result> electionResults = electionResultRepo.findByCandidateId(id);

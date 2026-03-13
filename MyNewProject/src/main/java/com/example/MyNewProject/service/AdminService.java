@@ -7,6 +7,7 @@ import com.example.MyNewProject.dto.ElectionResultRequestDTO;
 import com.example.MyNewProject.event.ElectionResultCreatedEvent;
 import com.example.MyNewProject.repository.*;
 import com.example.MyNewProject.tables.*;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +45,12 @@ public class AdminService {
     }
 
     @Transactional
+    @CacheEvict(value = {
+            "candidate",
+            "candidateAssets",
+            "candidateElectionHistory",
+            "candidateCompare"
+    }, key = "#dto.candidateId")
     public void createElectionResult(ElectionResultRequestDTO dto) {
 
         Candidate candidate = candidateRepo.findById(dto.getCandidateId()).orElseThrow(()->new IllegalArgumentException("candidate not found"));
@@ -91,6 +98,10 @@ public class AdminService {
 
     }
     @Transactional
+    @CacheEvict(value = {
+            "candidateByName",
+            "candidateByParty"
+    }, allEntries = true)
     public void createCandidate(CandidateDto dto) {
         Candidate candidate = new Candidate();
         candidate.setBiofraphy(dto.getBiography());
@@ -103,6 +114,7 @@ public class AdminService {
 
     }
     @Transactional
+    @CacheEvict(value = "candidateElectionHistory", allEntries = true)
     public void createConstituency(ConstituencyDto dto) {
         Constituency constituency = new Constituency();
         constituency.setName(dto.getName());
@@ -110,7 +122,9 @@ public class AdminService {
         constituency.setState(dto.getState());
         constituencyRepo.save(constituency);
     }
+    @Transactional
 
+    @CacheEvict(value = "candidateElectionHistory", allEntries = true)
     public void createElection(ElectionDto dto) {
         Election election = new Election();
         election.setElectionType(dto.getElectionType());
