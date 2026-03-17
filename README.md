@@ -33,6 +33,11 @@ Manage database CRUD operations
 Performance Optimization->
 
 To improve system performance:
+Frontend Repository
+
+Frontend application is available here:
+
+https://github.com/gm3919540-sketch/front_end_know_your_leader
 
 Redis caching implemented to reduce repeated database queries
 
