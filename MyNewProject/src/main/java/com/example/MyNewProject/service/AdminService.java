@@ -54,8 +54,8 @@ public class AdminService {
     public void createElectionResult(ElectionResultRequestDTO dto) {
 
         Candidate candidate = candidateRepo.findById(dto.getCandidateId()).orElseThrow(()->new IllegalArgumentException("candidate not found"));
-        Constituency constituency = constituencyRepo.findById(dto.getConstituencyId()).orElseThrow(()->new IllegalArgumentException("constinuecny not found"));
-        Election election = electionRepo.findById(dto.getElectionId()).orElseThrow(()->new IllegalArgumentException("election not found"));
+        Constituency constituency = constituencyRepo.findByNameAndStateAndDistrict(dto.getState(),dto.getDistrict(),dto.getConstname()).orElseThrow(()->new IllegalArgumentException("constinuecny not found"));
+        Election election = electionRepo.findByElectionTypeAndYear(dto.getElectionType(),dto.getElectionYear()).orElseThrow(()->new IllegalArgumentException("election not found"));
         Election_Result electionResult = new Election_Result();
 
         electionResult.setCandidate(candidate);
