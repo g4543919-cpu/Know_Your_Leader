@@ -1,11 +1,12 @@
 package com.example.MyNewProject.controller;
 
-import com.example.MyNewProject.dto.CandidateDto;
-import com.example.MyNewProject.dto.ConstituencyDto;
-import com.example.MyNewProject.dto.ElectionDto;
-import com.example.MyNewProject.dto.ElectionResultRequestDTO;
+import com.example.MyNewProject.dto.*;
 import com.example.MyNewProject.service.AdminService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/admin")
@@ -27,6 +28,23 @@ public class AdminController {
         adminService.createElectionResult(dto);
         return "Election Result Created Succefully";
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO req) {
+
+        if ("admin@gmail.com".equals(req.getEmail()) &&
+                "1234".equals(req.getPassword())) {
+
+            return ResponseEntity.ok(Map.of(
+                    "token", "admin-token-123",
+                    "role", "ADMIN"
+            ));
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body("FAIL");
+    }
+
     @PostMapping("/Candidate")
     public String createCandidate(@RequestBody CandidateDto dto){
         adminService.createCandidate(dto);

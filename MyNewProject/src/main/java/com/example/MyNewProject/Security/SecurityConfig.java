@@ -2,6 +2,7 @@ package com.example.MyNewProject.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -15,14 +16,25 @@ import java.util.List;
 public class SecurityConfig {
 
     @Bean
+
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
+
+                        //  Allow login without authentication
+                        .requestMatchers("/admin/login").permitAll()
+
+                        // Allow all GET requests
+                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
+
+                        // All other POST require auth
+                        .requestMatchers(HttpMethod.POST, "/**").authenticated()
+
                         .anyRequest().authenticated()
-                )
-                .httpBasic(Customizer.withDefaults());
+
+                );
 
         return http.build();
     }
