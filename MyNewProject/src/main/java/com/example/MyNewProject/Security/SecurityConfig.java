@@ -16,24 +16,23 @@ import java.util.List;
 public class SecurityConfig {
 
     @Bean
-
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
 
-                        //  Allow login without authentication
+                        // allow login
                         .requestMatchers("/admin/login").permitAll()
 
-                        // Allow all GET requests
+                        // allow all admin POST
+                        .requestMatchers(HttpMethod.POST, "/admin/**").permitAll()
+
+                        //  allow all GET
                         .requestMatchers(HttpMethod.GET, "/**").permitAll()
 
-                        // All other POST require auth
-                        .requestMatchers(HttpMethod.POST, "/**").authenticated()
-
+                        // everything else secured
                         .anyRequest().authenticated()
-
                 );
 
         return http.build();
@@ -43,7 +42,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        //(allow all origins)
+        config.setAllowedOriginPatterns(List.of("*"));
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
