@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.io.ByteArrayOutputStream;
@@ -149,7 +150,7 @@ public class CandidateService {
         List<Candidate> candidates = candidateRepo.findByNameAndParty(name,party);
         return candidates;
     }
-
+    @Transactional
     public String getCandidateSummary(int id) throws Exception {
         Candidate candidate = candidateRepo.findById(id)
                 .orElseThrow(()-> new IllegalArgumentException("Candidate does not exist"));
